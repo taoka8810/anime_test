@@ -1,0 +1,77 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"/><link rel="icon" href="/teat1/favicon.ico"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#000000"/><meta name="description" content="Web site created using create-react-app"/><link rel="apple-touch-icon" href="/teat1/logo192.png"/><link rel="manifest" href="/teat1/manifest.json"/><link rel="stylesheet" href="./index.css"/><script src="processing.min.js"></script><script type="text/processing" data-processing-target="processing-canvas">float step = 20;
+float maxAmp = 50;
+float maxDistance = 300;
+color c1 = color(22, 199, 175);
+color c2 = color(199, 21, 133);
+ArrayList<Oscillator> oscillators;
+
+void setup(){
+  size(1000, 1000, P3D);
+  sphereDetail(4);
+  noStroke();  
+  oscillators = new ArrayList<Oscillator>();
+  oscillators.add(new Oscillator(new PVector(width / 2.0, height / 2.0)));
+}
+
+void draw(){
+  background(0);
+  translate(width / 2, height / 2, -200);
+  rotateX(PI / 3);
+  rotateZ(PI / 4);
+  translate(-width / 2, -height / 2, 0);
+  lights();
+  for(float x = 0; x <= width; x += step){
+    for(float y = 0; y <= height; y += step){
+      PVector p = new PVector(x, y);
+      pushMatrix();
+      float z = 0;
+      for(Oscillator osc: oscillators){
+        z += osc.getValue(p);
+      }
+      translate(x, y, z);
+      fill(map(z, 100, -100, red(c1), red(c2)),
+            map(z, 100, -100, green(c1), green(c2)),
+            map(z, 100, -100, blue(c1), blue(c2)));
+      sphere(5);
+      popMatrix();
+    }
+  }
+  for(Oscillator osc: oscillators){
+    osc.update();
+  }
+  ArrayList<Oscillator> nextOscillators = new ArrayList<Oscillator>();
+  for(Oscillator osc: oscillators){
+    if(osc.energy >= 0.01){
+      nextOscillators.add(osc);
+    }
+  }
+  oscillators = nextOscillators;
+}
+
+void mousePressed(){
+  oscillators.add(new Oscillator(new PVector(mouseX, mouseY)));
+}
+
+class Oscillator{
+  
+  PVector loc;
+  float time;
+  float energy;
+  
+  Oscillator(PVector _loc){
+    loc = _loc;
+    time = frameCount;
+    energy = 1.0;
+  }
+  
+  void update(){
+    energy *= 0.995;
+  }
+  
+  float getValue(PVector p){
+    float d = loc.dist(p);
+    float amp = maxAmp * energy * ((maxDistance - d) / maxDistance);
+    return map(sin(d * PI / 128 - (frameCount - time) * 0.1), -1, 1, -amp, amp);
+  }
+  
+}</script><title>React App</title><link href="/teat1/static/css/main.8c8b27cf.chunk.css" rel="stylesheet"></head><body><div id="root"></div><canvas id="processing-canvas"></canvas><script>!function(e){function t(t){for(var n,a,i=t[0],c=t[1],l=t[2],s=0,p=[];s<i.length;s++)a=i[s],Object.prototype.hasOwnProperty.call(o,a)&&o[a]&&p.push(o[a][0]),o[a]=0;for(n in c)Object.prototype.hasOwnProperty.call(c,n)&&(e[n]=c[n]);for(f&&f(t);p.length;)p.shift()();return u.push.apply(u,l||[]),r()}function r(){for(var e,t=0;t<u.length;t++){for(var r=u[t],n=!0,i=1;i<r.length;i++){var c=r[i];0!==o[c]&&(n=!1)}n&&(u.splice(t--,1),e=a(a.s=r[0]))}return e}var n={},o={1:0},u=[];function a(t){if(n[t])return n[t].exports;var r=n[t]={i:t,l:!1,exports:{}};return e[t].call(r.exports,r,r.exports,a),r.l=!0,r.exports}a.e=function(e){var t=[],r=o[e];if(0!==r)if(r)t.push(r[2]);else{var n=new Promise((function(t,n){r=o[e]=[t,n]}));t.push(r[2]=n);var u,i=document.createElement("script");i.charset="utf-8",i.timeout=120,a.nc&&i.setAttribute("nonce",a.nc),i.src=function(e){return a.p+"static/js/"+({}[e]||e)+"."+{3:"5476a2a8"}[e]+".chunk.js"}(e);var c=new Error;u=function(t){i.onerror=i.onload=null,clearTimeout(l);var r=o[e];if(0!==r){if(r){var n=t&&("load"===t.type?"missing":t.type),u=t&&t.target&&t.target.src;c.message="Loading chunk "+e+" failed.\n("+n+": "+u+")",c.name="ChunkLoadError",c.type=n,c.request=u,r[1](c)}o[e]=void 0}};var l=setTimeout((function(){u({type:"timeout",target:i})}),12e4);i.onerror=i.onload=u,document.head.appendChild(i)}return Promise.all(t)},a.m=e,a.c=n,a.d=function(e,t,r){a.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},a.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},a.t=function(e,t){if(1&t&&(e=a(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var r=Object.create(null);if(a.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var n in e)a.d(r,n,function(t){return e[t]}.bind(null,n));return r},a.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return a.d(t,"a",t),t},a.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},a.p="/teat1/",a.oe=function(e){throw console.error(e),e};var i=this.webpackJsonpsample=this.webpackJsonpsample||[],c=i.push.bind(i);i.push=t,i=i.slice();for(var l=0;l<i.length;l++)t(i[l]);var f=c;r()}([])</script><script src="/teat1/static/js/2.fee752a7.chunk.js"></script><script src="/teat1/static/js/main.e49a1cdb.chunk.js"></script></body></html>
